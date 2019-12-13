@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>好友列表</title>
+    <!-- 引入bootstrap样式文件 -->
+    <!--引入jQuery-->
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="font/iconfont.css">
+    <style>
+        html,body{
+            width: 100%;
+            height: 100%;
+        }
+        #bg{
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            z-index: -1;
+        }
+        .container{
+            background: #fff;
+            min-height:100% ;
+            height: auto;
+            padding-bottom: 30px;
+        }
+        .user_text{
+            display: inline-block;
+        }
+        .user_text li{
+            min-width: 40px;
+            float: left;
+        }
+        .navbar{
+            background: #F19482;
+        }
+        .user{
+            border: 1px solid #F19482;
+            margin-top: 20px;
+            min-height: 100px;
+        }
+        .user_info{
+            float: left;
+            width: 70%;
+            height: 100%;
+            border-left: 2px solid #F19482;
+            padding-left: 10px;
+        }
+        .user_query{
+            float: left;
+            width: 30%;
+            height: 100%;
+            line-height:100px;;
+        }
+        .user_query button{
+            background: #F19482;
+            border: none;
+        }
+
+    </style>
+</head>
+<body>
+    <img id="bg" src="img/bg.png" alt="">
+    <div class="container">
+          
+        <nav class="navbar navbar-expand-md">
+            <a class="navbar-brand" href="#">
+                <img src="img/logo.png" alt="Logo" style="width:40px;">
+            </a>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/index">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/food">菜谱</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user/home">个人中心</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user/news">动态</a>
+                    </li> 
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user/friends">好友列表</a>
+                    </li> 
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user/morefriends">更多好友</a>
+                    </li> 
+                </ul>
+            </div> 
+            <ul class="nav navbar-nav navbar-right user_text">
+                <% if(username) { %>
+                    <li><span class="glyphicon glyphicon-user"></span>欢迎！</li>
+                    <li><span class="glyphicon glyphicon-user"></span><%= username%></li>
+                    <li style="margin-left:20px;"><a href="/user/logout"><span class="glyphicon glyphicon-log-in"></span> 注销</a></li>
+                <% }else{ %>
+                    <li><a href="/user/regis"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
+                    <li><a href="/user/login"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>
+                <% } %>
+            </ul>
+            <button class="navbar-toggler"  type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                <span class="iconfont icon-xialaliebiaokuang" style="font-size:26px;"></span>
+            </button>
+        </nav>
+       
+        <% friends.forEach(function (user) { %>
+            <div class="user row">
+                <div class="col-md-12">
+                    <div class="user_info">
+                        <img style="width: 50px;height: 50px;" src="<%= user.avatar%>" alt="">
+                        <span style="height: 50px;line-height: 50px;margin-left: 10px;"><%= user.nickname%></span>
+                        <div class="motto">
+                            <span>座右铭：</span>
+                            <%= user.motto%>
+                        </div>
+                    </div>
+                    <div class="user_query text-right">
+                        <button class="removefriend">
+                            <div class="id" style="display: none;"> <%= user.id %></div>
+                            删除
+                        </button>
+                    </div>
+                </div>
+               
+            </div>
+            
+        <%}) %> 
+    
+    </div>
+
+     <!--引入jQuery-->
+     <script src="js/jquery-3.4.1.min.js"></script>
+     <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+     <script>
+        $(document).ready(function () {
+            // 删除数据
+            $('.removefriend').on('click',function () {
+                var id = $.trim($(this).children('.id').text());
+                // 将数据传递到服务器中
+                $.ajax({
+                    type:"POST",
+                    url:'/user/removefriend',
+                    data:{
+                        id:id
+                    },
+                    success:function (data) {
+                        location.reload();
+                    }
+                })
+            });
+
+        });
+    </script>
+        
+</body>
+
+</html>
