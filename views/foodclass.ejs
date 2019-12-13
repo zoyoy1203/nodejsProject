@@ -81,7 +81,7 @@
                             <a class="nav-link" href="/index">首页</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/food">菜谱</a>
+                            <a class="nav-link" href="/foodclass">菜谱</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/user/home">个人中心</a>
@@ -126,7 +126,7 @@
                                    if(f.foods){
                                     f.foods.forEach(function(ff){%>
                                     <div class="col-6 col-md-3 col-sm-4 item_c">
-                                        <span class="item">  <%=ff.name%></span>
+                                        <span class="item"><a href="/foods?id=<%=ff.id%>"> <%=ff.name%></a> </span>
                                     </div>
                                     <%}) 
                                     }

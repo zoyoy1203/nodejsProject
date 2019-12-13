@@ -25,7 +25,7 @@ router.route('/index')
     })
 
 // 菜谱页面
-router.route('/food')
+router.route('/foodclass')
     // get请求渲染登录页面
     .get(function (req,res) {
         let sql1 = 'SELECT * FROM foods_main_class';
@@ -112,7 +112,7 @@ router.route('/food')
                             food_child[t].foods = f
                             if(i == result.length-1 && t==food_child.length-2){
                                 // res.send(foods)
-                                res.render('food',{username:req.cookies.islogin,foods:foods})
+                                res.render('foodclass',{username:req.cookies.islogin,foods:foods})
                             }
                         })
                         promise.catch(function(value){
@@ -134,5 +134,24 @@ router.route('/food')
 
     })
    
+// 美食页面
+router.route('/foods')
+    // get请求渲染登录页面
+    .get(function (req,res) {
+        console.log(req.query.id)
+        let params = req.query.id
+        let sql = 'SELECT * FROM foods_detail WHERE f_c_id=?';
+        db.query(sql, params,(err, result) => {
+            if (err) throw err;
+            if(req.cookies.islogin){
+                req.session.islogin=req.cookies.islogin;
+            }
+            if(req.session.islogin){
+                res.locals.islogin=req.session.islogin;
+            }
+            console.log(result)
+            res.render('foods', { foods:result,username:res.locals.islogin});
+        })
+    })
 
 module.exports = router;
