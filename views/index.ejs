@@ -34,7 +34,7 @@
         }
         .food img {
             width: 100%;
-            max-height: 160px;
+            height: 160px;
             border-radius: 20px;
         }
     </style>
@@ -72,6 +72,9 @@
                 <% if(username) { %>
                     <li><span class="glyphicon glyphicon-user"></span>欢迎！</li>
                     <li><span class="glyphicon glyphicon-user"></span><%= username%></li>
+                    <%if(username == 'admin'){%>
+                    <li><a href="/admin/adminUser"><span class="glyphicon glyphicon-log-in"></span>后台</a></li>
+                    <%}%>
                     <li style="margin-left:20px;"><a href="/user/logout"><span class="glyphicon glyphicon-log-in"></span> 注销</a></li>
                 <% }else{ %>
                     <li><a href="/user/regis"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
@@ -119,8 +122,10 @@
         <h2 class="col-md-12">推荐菜谱</h2>
         <% recommend_foods.forEach(function (food) { %>
             <div class="col-md-3 food">
-                <img src="<%= food.img%>" alt="">
-                <p><%= food.name%></p>
+                <a href="/fooddetail?id=<%=food.id%>">
+                    <img src="<%= food.img%>" alt="">
+                    <p><%= food.name%></p>
+                </a>
             </div>
         <%}) %>
     </div>

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>用户管理页面</title>
+    <!-- 引入bootstrap样式文件 -->
+    <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="font/iconfont.css">
+    <style>
+        html,body{
+            width: 100%;
+            height: 100%;
+        }
+        body{
+            background: url('img/bg3.png')
+        }
+        .admin_content{
+            height: 100%;
+        }
+        .nav{
+            min-height: 50px;
+            background:rgba(227,217,221, 0.9)
+        }
+        .nav ul{
+            list-style: none;
+            display:inline-block;
+        }
+        .nav ul li{
+            float: left;
+            height: 50px;
+            line-height: 50px;
+        }
+        .content{
+           background: rgba(255,255, 255, 0.9)
+        }
+
+        .users{
+            margin-top: 20px;
+        }
+        .user{
+            border: 1px solid #F19482;
+            padding: 0;
+            margin: 0;
+            margin-bottom: 20px;
+        }
+        .user button{
+            border: none;
+            background: #F19482;
+        }
+        .user .tag{
+            display: inline-block;
+            font-size: 18px;
+            font-weight: 600;
+            width: 70px;
+
+        }
+        /* .user .name{
+            font-size:18px;
+            font-weight: 600;
+            color: #F19482;
+            height: 100px;
+            line-height: 100px;
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+        }
+        .user .motto{
+            height: 100px;
+            line-height: 100px;
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+
+        } */
+       
+    </style>
+</head>
+<body>
+    <div class="row admin_content">
+        <div class="col-md-3 col-12 nav">
+            <ul class="row">
+                <h3 class="col-md-12">欢迎！
+                    <span><%= admin%></span>
+                    <a href="/admin/logout" style="font-size:16px;">退出</a>
+                    <a href="/admin/goIndex" style="font-size:16px;">前台</a>
+                </h2>
+                <li class="col-md-12 col-4">
+                    <a href="/admin/adminUser">用户管理</a>
+                </li>
+                <li class="col-md-12 col-4">
+                    <a href="/admin/adminFoodRec">菜谱推荐</a>
+                </li>
+                <li class="col-md-12 col-4">
+                    <a href="/admin/adminFoodAdd">菜谱添加</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-9 col-12 content" style="height:100%;">
+            <div class="container" style="background:#fff;margin-top: 30px;">
+             
+                <div class="row users">
+                    <% users.forEach(function (user) { %>
+                        <div class="col-md-4 col-sm-6 row user">
+                            <div class="col-md-3">
+                                <img style="width: 50px;height: 50px;" src="<%= user.avatar%>" alt="">
+                            </div>
+                            <div class="col-md-9 info">
+                                <div><span class="tag">id:</span> <%= user.id%></div>
+                                <div><sapn class="tag">用户名:</sapn><%= user.username%></div>
+                                <div><sapn class="tag">密码:</sapn><%= user.password%></div>
+                                <div><sapn class="tag">昵称:</sapn><%= user.nickname%></div>
+                                <div><sapn class="tag">座右铭:</sapn><%= user.motto%></div>
+                            </div>
+                            <div class="col-md-12">
+                                <button class="deleteUser">
+                                    <div class="id" style="display: none;"> <%= user.id %></div>
+                                    删除
+                                </button>
+                            </div>
+                        </div>
+                    <%}) %>
+                </div>
+              
+            </div>
+        </div>
+    </div>
+    
+
+     <!--引入jQuery-->
+     <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+     <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+     <script>
+        $(document).ready(function () {
+            // 删除数据
+            $('.deleteUser').on('click',function () {
+                var id = $.trim($(this).children('.id').text());
+                // 将数据传递到服务器中
+                $.ajax({
+                    type:"POST",
+                    url:'/admin/deleteUser',
+                    data:{
+                        id:id
+                    },
+                    success:function (data) {
+                        location.reload();
+                    }
+                })
+            });
+
+        });
+    </script>
+</body>
+
+</html>

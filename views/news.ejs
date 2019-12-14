@@ -111,6 +111,9 @@
                 <% if(username) { %>
                     <li><span class="glyphicon glyphicon-user"></span>欢迎！</li>
                     <li><span class="glyphicon glyphicon-user"></span><%= username%></li>
+                    <%if(username == 'admin'){%>
+                        <li><a href="/admin/adminUser"><span class="glyphicon glyphicon-log-in"></span>后台</a></li>
+                    <%}%>
                     <li style="margin-left:20px;"><a href="/user/logout"><span class="glyphicon glyphicon-log-in"></span> 注销</a></li>
                 <% }else{ %>
                     <li><a href="/user/regis"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
@@ -127,24 +130,32 @@
                 <div class="col-md-12 put_new" >
                     <h3>发布动态  </h3>
                     <div id="myinfo">
-                        <form action="/user/uploadNew" method="post" enctype="multipart/form-data">
-                            <input type="text" placeholder="美食推荐。。。" name="text">
-                            <input type='button' value="上传图片"  OnClick='javascript:$("#doc").click();'/>
-                            <input type="file" name="img" multiple  id="doc" onchange="showImage();" style="display: none;" />
-        
-                            <input type="submit" value="发送"/>
+                        <form action="/user/uploadNew"  class="row" method="post" enctype="multipart/form-data">
+                            <div class="col-md-1 col-1"></div>
+                            <input type="text" placeholder="美食推荐。。。" class="col-10 col-md-6" name="text" style="border-left: 1px solid #F19482;">
+                        
+                            <div class="col-md-1 col-1"></div>
+                            <input type='button' value="上传图片" class="col-5 col-md-2" OnClick='javascript:$("#doc").click();'/>
+                            <input type="file" name="img" multiple   id="doc" onchange="showImage();" style="display: none;" />
+                            <input type="submit"class="col-5 col-md-1" value="发送"/>
+                            <div class="col-md-1 col-1"></div>
                         </form>
                         <div id="localImag">
                             <img id="preview" width=-1 height=-1 style="display:none" />
                         </div>
                     </div>
                 </div>
+                <% if(news==null){%>
+                    <div class="col-md-12 text-center" style="font-size:24px;font-weight:600;color:#F19482;">
+                        <%= info%>
+                    </div>
+                <%}else{%>
                 <% for(var i= 0;i<news.length;i++){%>
                     <div class="row news">
-                        <div class="col-md-2 text-right">
+                        <div class="col-md-2 col-2 text-right">
                             <img src="<%= news[i].avatar%>" alt="" class="avatar">
                         </div>
-                        <div class=" col-md-10">
+                        <div class=" col-md-10 col-10">
                             <div class="new">
                                 <div class="col-md-12 name">
                                     <%= news[i].nickname%>
@@ -154,7 +165,6 @@
                                 </div>
                                 <img class="new_img col-md-12" src=" <%= news[i].img%>" alt="">
                                 <div class="col-md-12">
-                                    <span>发布时间：</span>
                                     <%= news[i].createtime%>
                                     <button class="addlike">
                                         <div class="id" style="display: none;"> <%= news[i].id %></div>
@@ -173,12 +183,26 @@
                                     </div>
                               
                                 </div>
+                                <div class="col-md-12 comments">
+                                    <form action="/user/addcomments"  class="row" method="post">
+                                        <input type="text" value="<%= news[i].id%>" style="visibility: hidden;width: 0;" name="newid">
+                                        <input   type="text" placeholder="请输入评论。。"  name="content">
+                                        <input  type="submit" value="发送"/>
+                                    </form>
+                                </div>
+                                <% news[i].comments.forEach(function (comment) { %>
+                                    <div class="col-md-12">
+                                        <span style="display:inline-block;font-size:18px;font-weight:600; width: 50px;"><%= comment.nickname%>:</span>
+                                        <span><%= comment.content%></span>
+                                    </div>
+                                <%}) %>
                             </div>
                            
                         </div>
                     </div>
                     
                 <% }%>
+                <%}%>
             </div>
         </div>
 

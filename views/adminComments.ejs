@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>评论监控</title>
+    <!-- 引入bootstrap样式文件 -->
+    <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="font/iconfont.css">
+    <style>
+        html,body{
+            width: 100%;
+            height: 100%;
+        }
+        body{
+            background: url('img/bg3.png')
+        }
+        .admin_content{
+            height: 100%;
+        }
+        .container{
+           height: 100%;
+        }
+        .nav{
+            min-height: 50px;
+            background: #E3D9DD;
+        }
+        .nav ul{
+            width: 100%;
+            list-style: none;
+            display:inline-block;
+        }
+        .nav ul li{
+            float: left;
+            height: 50px;
+            line-height: 50px;
+        }
+        input[type="submit"],
+        input[type="button"]{
+            background: #E3D9DD;
+        }
+        select,
+        input,
+        textarea{
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="row admin_content">
+        <div class="col-md-3 col-12 nav">
+            <ul class="row">
+                <h3 class="col-md-12">欢迎！<span><%= admin%></span>
+                    <a href="/admin/logout" style="font-size:16px;">退出</a>
+                    <a href="/admin/goIndex" style="font-size:16px;">前台</a>
+                </h3>
+                <li class="col-md-12 col-4">
+                    <a href="/admin/adminUser">用户管理</a>
+                </li>
+                <li class="col-md-12 col-4">
+                    <a href="/admin/adminFoodRec">菜谱推荐</a>
+                </li>
+                <li class="col-md-12 col-4">
+                    <a  href="/admin/adminFoodAdd">菜谱添加</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-9 col-12 content" style="height:100%;">
+            <div class="container" style="background:#fff;">
+                <div class="col-md-12 row" >
+                 
+                </div>
+            </div>
+        </div>
+       
+    </div>
+    
+
+     <!--引入jQuery-->
+     <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+     <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+     <script>
+            function showImage() {
+                var docObj = document.getElementById("doc");
+                var imgObjPreview = document.getElementById("preview");
+                if (docObj.files && docObj.files[0]) {
+                    //火狐下，直接设img属性
+                    imgObjPreview.style.display = 'block';
+                    imgObjPreview.style.width = '100px';
+                    imgObjPreview.style.height = '100px';
+                    //imgObjPreview.src = docObj.files[0].getAsDataURL();
+                    //火狐7以上版本不能用上面的getAsDataURL()方式获取，需要一下方式
+                    imgObjPreview.src = window.URL.createObjectURL(docObj.files[0]);
+                } else {
+                    //IE下，使用滤镜
+                    docObj.select();
+                    var imgSrc = document.selection.createRange().text;
+                    var localImagId = document.getElementById("localImag");
+                    //必须设置初始大小
+                    localImagId.style.width = "250px";
+                    localImagId.style.height = "200px";
+                    //图片异常的捕捉，防止用户修改后缀来伪造图片
+                    try {
+                        localImagId.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale)";
+                        localImagId.filters
+                            .item("DXImageTransform.Microsoft.AlphaImageLoader").src = imgSrc;
+                    } catch (e) {
+                        alert("您上传的图片格式不正确，请重新选择!");
+                        return false;
+                    }
+                    imgObjPreview.style.display = 'none';
+                    document.selection.empty();
+                }
+                return true;
+            }
+         </script>
+</body>
+
+</html>

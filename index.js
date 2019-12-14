@@ -8,6 +8,8 @@ var session=require('express-session');
 var userController = require('./controller/userController');
 // 美食控制模块
 var foodController = require('./controller/foodController');
+// 管理员控制模块
+var adminController = require('./controller/adminController');
 
 var app = express();
 
@@ -25,6 +27,7 @@ app.use(session({
 app.use('/upload', express.static('upload'));
 // 为了后面动态图片能显示
 app.use('/user/upload', express.static('upload'));  
+app.use('/admin/upload', express.static('upload'));  
 
 //设置 views 文件夹为存放视图文件的目录, 即存放模板文件的地方
 app.set('views', path.join(__dirname, 'views'));
@@ -32,12 +35,18 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine','ejs');
 
 // 匹配路由路径  主路由
-app.use('/user',userController);
 app.use('/',foodController);
+app.use('/user',userController);
+app.use('/admin',adminController);
+
+//静态文件目录，
+app.use(express.static(path.join(__dirname,'public')));
 
 // 静态化我们的public文件下的文件，使其可以直接引用
-app.use('/user',express.static(path.join(__dirname, 'public')));
 app.use('/',express.static(path.join(__dirname, 'public')));
+app.use('/user',express.static(path.join(__dirname, 'public')));
+app.use('/admin',express.static(path.join(__dirname, 'public')));
+
 
 
 // 监听3000端口，开启服务器

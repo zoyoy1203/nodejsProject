@@ -101,6 +101,9 @@
                 <% if(username) { %>
                     <li><span class="glyphicon glyphicon-user"></span>欢迎！</li>
                     <li><span class="glyphicon glyphicon-user"></span><%= username%></li>
+                    <%if(username == 'admin'){%>
+                        <li><a href="/admin/adminUser"><span class="glyphicon glyphicon-log-in"></span>后台</a></li>
+                    <%}%>
                     <li style="margin-left:20px;"><a href="/user/logout"><span class="glyphicon glyphicon-log-in"></span> 注销</a></li>
                 <% }else{ %>
                     <li><a href="/user/regis"><span class="glyphicon glyphicon-user"></span> 注册</a></li>

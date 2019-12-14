@@ -114,7 +114,15 @@
             width: 100px;
             height: auto;
         }
-    
+        textarea{
+            border: #F19482;
+            background: #F5DBD4;
+        }
+        input,
+        button{
+            background: #F19482;
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -151,6 +159,9 @@
                 <% if(username) { %>
                     <li><span class="glyphicon glyphicon-user"></span>欢迎！</li>
                     <li><span class="glyphicon glyphicon-user"></span><%= username%></li>
+                    <%if(username == 'admin'){%>
+                        <li><a href="/admin/adminUser"><span class="glyphicon glyphicon-log-in"></span>后台</a></li>
+                    <%}%>
                     <li style="margin-left:20px;"><a href="/user/logout"><span class="glyphicon glyphicon-log-in"></span> 注销</a></li>
                 <% }else{ %>
                     <li><a href="/user/regis"><span class="glyphicon glyphicon-user"></span> 注册</a></li>

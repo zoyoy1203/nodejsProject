@@ -14,13 +14,17 @@ router.route('/index')
         let sql = 'SELECT * FROM foods_detail WHERE recommend=1';
         db.query(sql, (err, result) => {
             if (err) throw err;
+            console.log(req.cookies.islogin)
             if(req.cookies.islogin){
                 req.session.islogin=req.cookies.islogin;
             }
             if(req.session.islogin){
                 res.locals.islogin=req.session.islogin;
+                res.render('index', { recommend_foods:result,username:res.locals.islogin});
+            }else{
+                res.render('index', { recommend_foods:result,username:null});
             }
-            res.render('index', { recommend_foods:result,username:res.locals.islogin});
+          
         })
     })
 
@@ -138,7 +142,7 @@ router.route('/foodclass')
 router.route('/foods')
     // get请求渲染登录页面
     .get(function (req,res) {
-        console.log(req.query.id)
+        // console.log(req.query.id)
         let params = req.query.id
         let sql = 'SELECT * FROM foods_detail WHERE f_c_id=?';
         db.query(sql, params,(err, result) => {
@@ -149,9 +153,28 @@ router.route('/foods')
             if(req.session.islogin){
                 res.locals.islogin=req.session.islogin;
             }
-            console.log(result)
-            res.render('foods', { foods:result,username:res.locals.islogin});
+            // console.log(result)
+            res.render('foods', { foodclass:req.query.foodclass,foods:result,username:res.locals.islogin});
         })
     })
+
+// 菜谱详情页面
+router.route('/fooddetail')
+    // get请求渲染登录页面
+    .get(function (req,res) {
+        let params = req.query.id
+        let sql = 'SELECT * FROM foods_detail WHERE id = ?';
+        db.query(sql,params, (err, result) => {
+            if (err) throw err;
+            console.log(result)
+            result[0].cookstory=result[0].cookstory.replace(/\\n/g,'\n') // 将字符串里的\\n 替换为\n  这样就能在页面上换行输出
+            console.log(result)
+            res.render('fooddetail',{food:result[0],username:req.cookies.islogin})
+        
+        })
+
+
+    })
+   
 
 module.exports = router;

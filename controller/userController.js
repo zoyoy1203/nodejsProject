@@ -22,9 +22,11 @@ router.route('/login')
         if(req.session.islogin && req.session.userid){
             res.locals.islogin=req.session.islogin;
             res.locals.userid = req.session.userid;
-            res.redirect('/index')
+            res.redirect('/index')  // 查询cookie，如果先前登陆过，cookie时间还没过期，则自动跳转页面，无需重新输入登录
+        }else{
+            res.render('login', {errinfo:''});// 如果没有cooike,则渲染登录页面
         }
-        res.render('login', {errinfo:''});
+      
     })
     // post请求查询用户信息
     .post(urlencodeParser,function(req,res){
@@ -177,42 +179,59 @@ router.route('/news')
             params[0] = res.locals.userid;
             params[1] = res.locals.userid;
             params[2] = res.locals.userid;
+            // sql语句：user,news多表联合查询,获取该用户好友得动态和自己的动态，并按发布时间排序
             let sql = 'SELECT news.*,`user`.avatar,`user`.nickname FROM `user`,news WHERE `user`.id=news.user_id AND user_id IN (SELECT fid FROM friend_connection WHERE uid = ?) OR (user_id=? AND `user`.id=?) ORDER BY news.createtime DESC,news.id DESC';
-            let sql1 = 'SELECT like_news.id,`user`.id "uid",`user`.avatar,`user`.nickname FROM `user`,like_news WHERE `user`.id=like_news.user_id AND like_news.news_id=?'
+            // sql 语句：获取每条动态的用户点赞信息
+            let sql1 = 'SELECT like_news.id,`user`.id "uid",`user`.avatar,`user`.nickname FROM `user`,like_news WHERE `user`.id=like_news.user_id AND like_news.news_id=?;SELECT `comment`.*,`user`.nickname FROM `comment`,`user` WHERE new_id=? AND `comment`.user_id=`user`.id'
             db.query(sql,params, (err, result) => {
                 if (err) throw err;
-                for(let i=0;i<result.length;i++){
-                    console.log(result[i].id)
-                    var promise = new Promise(function (resolve, reject) {
-                        db.query(sql1,result[i].id,(err,result1) => {
-                            if (err) throw err;
-                            resolve(result1)
-                        })
-                    });
-
-                    promise.then(function (value) {
-                        var likeusers = value.slice(0)
-                        result[i].like_users = likeusers
-                        result[i].like = 0;
-                        for(let j=0;j<likeusers.length;j++){
-                            if(likeusers[j].uid == res.locals.userid){
-                                result[i].like = 1;
-                                break;
+                // console.log(result)
+                if(result[0]!=null){
+                    // console.log('---------')
+                    for(let i=0;i<result.length;i++){
+                        // console.log(result[i].id)
+                        let params = [];
+                        params[0]=result[i].id;
+                        params[1] = result[i].id;
+                        var promise = new Promise(function (resolve, reject) {
+                            db.query(sql1,params,(err,result1) => {
+                                if (err) throw err;
+                                resolve(result1)
+                            })
+                        });
+    
+                        promise.then(function (value) {
+                            var likeusers = value.slice(0)
+                            result[i].like_users = likeusers[0]
+                            result[i].like = 0;
+                            for(let j=0;j<likeusers[0].length;j++){
+                                if(likeusers[0][j].uid == res.locals.userid){
+                                    result[i].like = 1;
+                                    break;
+                                }
                             }
-                        }
-                        console.log(result[i])
-                        console.log('==============')
-                        if(i==result.length-1){
-                            // res.send(result)
-                            res.render('news',{username:res.locals.islogin,news:result})
-                        }
+
+                            // 添加评论
+                            result[i].comments = likeusers[1];
+                            console.log(result[i].comments)
+                            // console.log('==============')
+                            if(i==result.length-1){
+                                // res.send(result)
+                                res.render('news',{username:res.locals.islogin,news:result})
+                            }
+                            
+                        })
+                        promise.catch(function(value){
+                            console.log('出错！')
+                        })
                         
-                    })
-                    promise.catch(function(value){
-                        console.log('出错！')
-                    })
-                    
+                    }
+                   
+                }else{
+                    console.log('没有动态')
+                    res.render('news',{username:res.locals.islogin,news:null,info:"暂无动态！"})
                 }
+             
                 // console.log(result)
                
             })
@@ -222,7 +241,7 @@ router.route('/news')
        
     })
 
-// 用户上传动态
+// 用户发布动态
 router.route('/uploadNew')
     .post(function(req,res) {
         //获取表单的数据 以及post过来的图片
@@ -245,6 +264,21 @@ router.route('/uploadNew')
             })
         });
     });
+
+// 用户评论
+router.route('/addcomments')
+.post(urlencodeParser,function(req,res) {
+    let params =[]
+    params[0] = req.body.newid;
+    params[1] = req.cookies.userid;
+    params[2] = req.body.content;
+    sql = 'INSERT INTO `comment`(new_id,user_id,content) VALUES(?,?,?) '
+    db.query(sql,params,(err,result)=> {
+        if (err) throw err;
+        res.redirect('/user/news');
+    })
+});
+
 
 // 好友列表
 router.route('/friends')

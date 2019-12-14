@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>菜谱推荐页面</title>
+    <!-- 引入bootstrap样式文件 -->
+    <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="font/iconfont.css">
+    <style>
+        html,body{
+            width: 100%;
+            height: 100%;
+        }
+        body{
+            background: url('img/bg3.png')
+        }
+        .admin_content{
+            height: 100%;
+        }
+        .container{
+           height: 100%;
+        }
+        .nav{
+            min-height: 50px;
+            background: #E3D9DD;
+        }
+        .nav ul{
+            width: 100%;
+            list-style: none;
+            display:inline-block;
+        }
+        .nav ul li{
+            float: left;
+            height: 50px;
+            line-height: 50px;
+        }
+        .foods{
+            padding-top: 20px;
+        }
+        .food{
+            background: #E3D9df;
+            border-top: 10px solid #fff;
+            border-right: 5px solid #fff;
+            padding-bottom: 30px;
+        }
+        .food button{
+            position: absolute;
+            bottom: 0;
+            background: #6F3535;
+            color: #fff;
+        }
+        .food_img{
+            width: 100%;
+           height: 130px;
+           overflow: hidden;
+        }
+        .food_img img{
+            width: 100%;
+           
+        }
+        .page{
+            background: #E3D9df;
+            width: 30px;
+            height: 30px;
+            float: left;
+            text-align: center;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="row admin_content">
+        <div class="col-md-3 col-12 nav">
+            <ul class="row">
+                <h3 class="col-md-12">欢迎！<span><%= admin%></span>
+                    <a href="/admin/logout" style="font-size:16px;">退出</a>
+                    <a href="/admin/goIndex" style="font-size:16px;">前台</a>
+                </h3>
+                <li class="col-md-12 col-4">
+                    <a href="/admin/adminUser">用户管理</a>
+                </li>
+                <li class="col-md-12 col-4">
+                    <a href="/admin/adminFoodRec">菜谱推荐</a>
+                </li>
+                <li class="col-md-12 col-4">
+                    <a  href="/admin/adminFoodAdd">菜谱添加</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-9 col-12 content" style="height:100%;">
+            <div class="container" style="background:#fff;">
+                <div class="row foods">
+                    <% foods.forEach(function (food) { %>
+                        <div class="col-md-3 food">
+                            <div class="food_img">
+                                <img src="<%= food.img%>" class="img" alt="">
+                            </div>
+                            <p><%= food.name%></p>
+                            <% if(food.recommend ==1){%>
+                                <button class="recommend">
+                                    <div class="id" style="display: none;"> <%= food.id %></div>
+                                    <div class="rec" style="display: none;"> <%= food.recommend %></div>
+                                    <div class="page" style="display: none;"> <%= page %></div>
+                                    取消推荐
+                                </button>
+                            <%}else{%>
+                                <button class="recommend">
+                                    <div class="id" style="display: none;"> <%= food.id %></div>
+                                    <div class="rec" style="display: none;"> <%= food.recommend %></div>
+                                    <div class="page" style="display: none;"> <%= page %></div>
+                                    推荐
+                                </button>
+                            <%}%>
+                        </div>
+                    <%}) %>
+                    <div class="col-md-12">
+                        <% for(var i=0; i<count;i++){%>
+                            <a href="/admin/page?page=<%= i%>">
+                                    <div class="page"><%= i%></div>
+                            </a>
+                        <%}%>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+    
+
+     <!--引入jQuery-->
+     <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+     <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+     <script>
+            $(document).ready(function () {
+                // 删除数据
+                $('.recommend').on('click',function () {
+                    var id = $.trim($(this).children('.id').text());
+                    var rec = $.trim($(this).children('.rec').text());
+                    var page = $.trim($(this).children('.page').text());
+                    // 将数据传递到服务器中
+                    $.ajax({
+                        type:"POST",
+                        url:'/admin/recommend',
+                        data:{
+                            id:id,
+                            rec:rec,
+                            page:page
+                        },
+                        success:function (data) {
+                            location.reload();
+                        }
+                    })
+                });
+    
+            });
+        </script>
+</body>
+
+</html>

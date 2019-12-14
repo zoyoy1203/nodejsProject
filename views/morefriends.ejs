@@ -56,7 +56,19 @@
             font-size:18px;
             font-weight: 600;
             color: #F19482;
-            margin: 0 20px;
+            height: 100px;
+            line-height: 100px;
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+        }
+        .user .motto{
+            height: 100px;
+            line-height: 100px;
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+
         }
     </style>
 </head>
@@ -95,6 +107,9 @@
                 <% if(username) { %>
                     <li><span class="glyphicon glyphicon-user"></span>欢迎！</li>
                     <li><span class="glyphicon glyphicon-user"></span><%= username%></li>
+                    <%if(username == 'admin'){%>
+                        <li><a href="/admin/adminUser"><span class="glyphicon glyphicon-log-in"></span>后台</a></li>
+                    <%}%>
                     <li style="margin-left:20px;"><a href="/user/logout"><span class="glyphicon glyphicon-log-in"></span> 注销</a></li>
                 <% }else{ %>
                     <li><a href="/user/regis"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
@@ -106,26 +121,26 @@
             </button>
         </nav>
        
-        <div class="row">
-            <div class="col-md-12">
-                <% friends.forEach(function (user) { %>
-                    <div class="col-md-12 user">
-                        <img style="width: 50px;height: 50px;" src="<%= user.avatar%>" alt="">
-                        <span class="name"><%= user.nickname%></span>
-                        <span>
-                            <%= user.motto%>
-                        </span>
-                        <div style="float:right;">
-                            <button class="addfriend">
-                                <div class="id" style="display: none;"> <%= user.id %></div>
-                                添加
-                            </button>
-                        </div>
-                       
-                    </div>
-                <%}) %> 
+      
+        <% friends.forEach(function (user) { %>
+            <div class="row user">
+                <div class="col-md-3 col-2">
+                    <img style="width: 50px;height: 50px;" src="<%= user.avatar%>" alt="">
+                </div>
+                <div class="col-md-3 name col-3"><%= user.nickname%></div>
+                <div class="col-md-4 motto col-4">
+                    <%= user.motto%>
+                </div>
+                <div class="col-md-2 col-3 text-right">
+                    <button class="addfriend">
+                        <div class="id" style="display: none;"> <%= user.id %></div>
+                        添加
+                    </button>
+                </div>
+                
             </div>
-        </div>
+        <%}) %> 
+     
     </div>
 
      <!--引入jQuery-->
