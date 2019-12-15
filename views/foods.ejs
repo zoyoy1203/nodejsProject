@@ -121,14 +121,18 @@
 
         <div class="foods row">
             <h2 class="col-md-12 title"><%= foodclass%></h2>
-            <% foods.forEach(function (food) { %>
-                <div class="col-md-3 food">
-                    <a href="/fooddetail?id=<%=food.id%>">
-                        <img src="<%= food.img%>" class="food_img" alt="">
-                        <p><%= food.name%></p>
-                    </a>
-                </div>
-            <%}) %>
+            <% if(foods[0]) {%>
+                <% foods.forEach(function (food) { %>
+                    <div class="col-md-3 food">
+                        <a href="/fooddetail?id=<%=food.id%>">
+                            <img src="<%= food.img%>" class="food_img" alt="">
+                            <p><%= food.name%></p>
+                        </a>
+                    </div>
+                <%}) %>
+            <%}else{%>
+                <div class="col-md-12" style="text-align:center;font-size:24px;font-weight:600;color:#52B2A7;">暂无数据录入</div>
+            <%}%>
         </div>
     </div>
    

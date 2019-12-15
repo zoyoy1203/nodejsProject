@@ -37,14 +37,58 @@
             height: 50px;
             line-height: 50px;
         }
-        input[type="submit"],
-        input[type="button"]{
+        .comments{
+            border-right: 3px solid #E3D9DD;
+            border-left: 3px solid #E3D9DD;
+            height: 40px;
+            line-height: 40px;
+        }
+        .comments .title{
+            background: #E3D9DD;
+        }
+        .comments .content{
+            margin-left: 10px;
+            padding: 0;
+            border-bottom: 2px solid #E3D9DD;
+            background: #fff;
+        }
+        button{
             background: #E3D9DD;
         }
         select,
         input,
         textarea{
             margin-top: 10px;
+        }
+        .title1{
+            text-align: center;
+            display: inline-block;
+            background: #E3D9DD;
+            width: 80px;
+            height: 30px;
+            line-height: 30px;
+            margin-right: 5px;
+        }
+        @media screen and (max-width: 550px) {
+            .title{
+                display: none;
+            }
+            .nav ul li {
+                padding: 0;
+            }
+        }
+        @media screen and (min-width: 550px) {
+            .title1{
+                display: none;
+            }
+        }
+        .page{
+            background: #E3D9df;
+            width: 30px;
+            height: 30px;
+            float: left;
+            text-align: center;
+            margin-right: 10px;
         }
     </style>
 </head>
@@ -56,21 +100,50 @@
                     <a href="/admin/logout" style="font-size:16px;">退出</a>
                     <a href="/admin/goIndex" style="font-size:16px;">前台</a>
                 </h3>
-                <li class="col-md-12 col-4">
+                <li class="col-md-12 col-3">
                     <a href="/admin/adminUser">用户管理</a>
                 </li>
-                <li class="col-md-12 col-4">
+                <li class="col-md-12 col-3">
                     <a href="/admin/adminFoodRec">菜谱推荐</a>
                 </li>
-                <li class="col-md-12 col-4">
-                    <a  href="/admin/adminFoodAdd">菜谱添加</a>
+                <li class="col-md-12 col-3">
+                    <a href="/admin/adminFoodAdd">菜谱添加</a>
+                </li>
+                <li class="col-md-12 col-3">
+                    <a href="/admin/adminComments">评论审核</a>
                 </li>
             </ul>
         </div>
         <div class="col-md-9 col-12 content" style="height:100%;">
             <div class="container" style="background:#fff;">
-                <div class="col-md-12 row" >
-                 
+                <div class="row comments">
+                    <div class="col-sm-2 title">动态id</div>
+                    <div class="col-sm-2 title">用户id</div>
+                    <div class="col-sm-3 title">评论内容</div>
+                    <div class="col-sm-3 title">时间</div>
+                    <div class="col-sm-2 title">操作</div>
+                    <% comments.forEach(function (comment) { %>
+                        <div class="col-md-12 content row">
+                            <div class="col-md-2"><span class="title1">动态id</span><%= comment.new_id%></div>
+                            <div class="col-md-2"><span class="title1">用户id</span><%= comment.user_id%></div>
+                            <div class="col-md-3"><span class="title1">评论内容</span><%= comment.content%></div>
+                            <div class="col-md-3"><span class="title1">时间</span><%= comment.createtime%></div>
+                            <div class="col-md-2">
+                                <button class="deleteComment">
+                                    <div class="id" style="display: none;"> <%= comment.id %></div>
+                                    <div class="page" style="display: none;"> <%= page %></div>
+                                    违规删除
+                                </button>
+                            </div>
+                        </div>
+                    <%}) %>
+                    <div class="col-md-12" style="background:#fff;">
+                        <% for(var i=0; i<count;i++){%>
+                            <a href="/admin/commentPage?page=<%= i%>">
+                                <div class="page"><%= i%></div>
+                            </a>
+                        <%}%>
+                    </div>
                 </div>
             </div>
         </div>
@@ -82,40 +155,27 @@
      <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
      <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
      <script>
-            function showImage() {
-                var docObj = document.getElementById("doc");
-                var imgObjPreview = document.getElementById("preview");
-                if (docObj.files && docObj.files[0]) {
-                    //火狐下，直接设img属性
-                    imgObjPreview.style.display = 'block';
-                    imgObjPreview.style.width = '100px';
-                    imgObjPreview.style.height = '100px';
-                    //imgObjPreview.src = docObj.files[0].getAsDataURL();
-                    //火狐7以上版本不能用上面的getAsDataURL()方式获取，需要一下方式
-                    imgObjPreview.src = window.URL.createObjectURL(docObj.files[0]);
-                } else {
-                    //IE下，使用滤镜
-                    docObj.select();
-                    var imgSrc = document.selection.createRange().text;
-                    var localImagId = document.getElementById("localImag");
-                    //必须设置初始大小
-                    localImagId.style.width = "250px";
-                    localImagId.style.height = "200px";
-                    //图片异常的捕捉，防止用户修改后缀来伪造图片
-                    try {
-                        localImagId.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale)";
-                        localImagId.filters
-                            .item("DXImageTransform.Microsoft.AlphaImageLoader").src = imgSrc;
-                    } catch (e) {
-                        alert("您上传的图片格式不正确，请重新选择!");
-                        return false;
-                    }
-                    imgObjPreview.style.display = 'none';
-                    document.selection.empty();
-                }
-                return true;
-            }
-         </script>
+            $(document).ready(function () {
+                // 删除数据
+                $('.deleteComment').on('click',function () {
+                    var id = $.trim($(this).children('.id').text());
+                    var page = $.trim($(this).children('.page').text());
+                    // 将数据传递到服务器中
+                    $.ajax({
+                        type:"POST",
+                        url:'/admin/deleteComments',
+                        data:{
+                            id:id,
+                            page:page
+                        },
+                        success:function (data) {
+                            location.reload();
+                        }
+                    })
+                });
+    
+            });
+        </script>
 </body>
 
 </html>

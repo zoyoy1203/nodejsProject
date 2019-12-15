@@ -14,6 +14,14 @@
             width: 100%;
             height: 100%;
         }
+        .nav-item a{
+            color: #000;
+        }
+        .nav-item .active{
+            font-size:20px;
+            color: #fff;
+            font-weight: 600;
+        }
         #bg{
             position: fixed;
             width: 100%;
@@ -97,7 +105,7 @@
                         <a class="nav-link" href="/user/home">个人中心</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/user/news">动态</a>
+                        <a class="nav-link active" href="/user/news">动态</a>
                     </li> 
                     <li class="nav-item">
                         <a class="nav-link" href="/user/friends">好友列表</a>
@@ -192,8 +200,9 @@
                                 </div>
                                 <% news[i].comments.forEach(function (comment) { %>
                                     <div class="col-md-12">
-                                        <span style="display:inline-block;font-size:18px;font-weight:600; width: 50px;"><%= comment.nickname%>:</span>
+                                        <span style="display:inline-block;font-size:18px;font-weight:600;min-width: 50px;"><%= comment.nickname%>:</span>
                                         <span><%= comment.content%></span>
+
                                     </div>
                                 <%}) %>
                             </div>
